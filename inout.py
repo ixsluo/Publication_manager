@@ -6,87 +6,135 @@ import impact
 
 df = impact.df
 
-# & parse documents
-def parse_document(filename):
-    exitcode = 0  # ^ exit code
-    document = {
-        'title': '',
-        'all_author': [],
-        'first_author': [],
-        'commun_author': [],
-        'periodical': '',
-        'if': '',
-        'publish_year': '',
-        'date': '',
-        'accept_year': '',
-        'volume': '',
-        'issue': '',
-        'doi': '',
-        'url': '',
-    }
-    with open(filename, 'r', encoding='utf-8') as f:
-        for line in f.readlines():
-            line = line.strip()
-            # ~ jump comment line or blank line
-            if (len(line) == 0) or (line[0] in ['#', '!', '"', "'"]):
+
+#& parse ris file
+class Ris:
+    #~ ris structure
+    def __init__(self, file=None):
+        self.records = []
+        self.parse(file)
+        #& Check periodical full name
+        for doc in self.records[:]:
+            if doc['JF'] not in df['periodical'].values:
+                print('Wrong periodical full name!!!    ', doc['JF'])
+                print('Pass to next document.')
+                self.records.remove(doc)
+        #& Add impact factor
+        for doc in self.records:
+            if doc['PY'] in df.columns:
+                #~ IF of the current year exist.
+                if_year = doc['PY']
+            elif str(int(doc['PY']) - 1) in df.columns:
+                #~ IF of the current year not exist, use IF of the last year.
+                if_year = str(int(doc['PY']) - 1)
+            else:
+                #~ IF of the last year not exist, do not do anything.
                 continue
-            # ~ split by any blank but at least one \t
-            key, value = re.split(r'\s*\t\s*', line)
-            key = key.strip(':').lower()  # remove ':'
-            if key == 'title':
-                document['title'] = value
-            elif key == 'all_author':
-                document['all_author'].append(value)
-            elif key == 'first_author':
-                document['first_author'].append(value)
-            elif key == 'commun_author':
-                document['commun_author'].append(value)
-            elif key == 'periodical':
-                document['periodical'] = value.lower()
-            elif key == 'if':
-                document['if'] = value
-            elif key == 'publish_year':
-                document['publish_year'] = value
-            elif key == 'date':
-                document['date'] = value
-            elif key == 'accept_year':
-                document['accept_year'] = value
-            elif key == 'volume':
-                document['volume'] = value
-            elif key == 'issue':
-                document['issue'] = value
-            elif key == 'doi':
-                document['doi'] = value
-            elif key == 'url':
-                document['url'] = value
-            else:
-                print('Unknown field, ignore: ', line)
-
-        if document['periodical'] not in df['periodical'].values:
-            # ! Wrong periodical, pass to next document
-            exitcode = 1
-        else:
-            # ~ IF of the current year exist
-            if document['publish_year'] in df.columns:  
-                if_year = document['publish_year']
-            # ~ IF of the current year not exist, use IF of the last year
-            elif str(int(document['publish_year']) - 1) in df.columns:
-                if_year = str(int(document['publish_year']) - 1)
-            # ~ IF of the last year not exist
-            else:
-                exitcode = 2
-                return document, exitcode
-
-            document['if'] = df[if_year].loc[
-                df[df['periodical'] == document['periodical']].index.values[0]
+            doc['C2'] = df[if_year].loc[
+                df[df['periodical'] == doc['JF']].index.values[0]
             ]
 
-    return document, exitcode
+
+    def parse(self, file):
+        with open(file, 'r', encoding='utf-8') as f:
+            for line in f.readlines():
+                line = line.strip()
+                if (len(line) == 0) or (line[0] in ['#', '!', '"', "'"]):
+                    continue
+                #~ find the index of split symbol
+                split_index = re.search('[  -]', line).span()[0]
+                key, value = line[:split_index], line[split_index + 3:]
+                key, value = key.strip(), value.strip()
+                self.parse_field(key, value)
+                #print(key, value)
+
+    def parse_field(self, key, value):
+        if key == 'TY':
+            # * initialize
+            self.document = {
+                'TY': '',
+                'TI': '',  #~ Title
+                'T1': '',  #~ Title in html format
+                'AU': [],
+                'A1': [],  #~ Primary authors
+                'C1': [],  #~ Custom 1, corresponding author
+                'C2': '',  #~ Custom 2, impact factor. Not recommended to specify manually
+                'JF': '',  #! Journal/Periodical name: full name
+                'JA': '',  #~ Journal standard abbreviation
+                'PY': '',  #~ Publication year
+                'DA': '',  #~ Date
+                'Y1': '',  #~ Primary date
+                'Y2': '',  #~ Access date
+                'VL': '',  #~ Volume
+                'IS': '',  #~ Issue
+                'SP': '',  #~ Start page
+                'DO': '',  #~ DOI
+                'UR': '',  #~ URL
+                'SN': '',  #~ ISBN/ISSN
+                'AB': '',  #~ Abstract
+                'N1': '',  #~ Notes
+                'N2': '',  #~ Abstract
+                'ID': '',  #~ Reference ID
+            }
+            self.document[key] = value
+        elif key == 'TI':
+            self.document[key] = value
+        elif key == 'T1':
+            self.document[key] = value
+        elif key == 'AU':
+            self.document[key].append(value)
+        elif key == 'A1':
+            self.document[key].append(value)
+        elif key == 'C1':
+            self.document[key].append(value)
+        elif key == 'C2':
+            self.document[key] = value
+        elif key == 'JF':
+            self.document[key] = value.lower()
+        elif key == 'JA':
+            self.document[key] = value
+        elif key == 'PY':
+            self.document[key] = value
+        elif key == 'DA':
+            self.document[key] = value
+        elif key == 'Y1':
+            self.document[key] = value
+        elif key == 'Y2':
+            self.document[key] = value
+        elif key == 'VL':
+            self.document[key] = value
+        elif key == 'IS':
+            self.document[key] = value
+        elif key == 'SP':
+            self.document[key] = value
+        elif key == 'EP':
+            self.document[key] = value
+        elif key == 'DO':
+            self.document[key] = value
+        elif key == 'UR':
+            self.document[key] = value
+        elif key == 'SN':
+            self.document[key] = value
+        elif key == 'AB':
+            pass
+            #self.document[key] = value
+        elif key == 'N1':
+            self.document[key] = value
+        elif key == 'N2':
+            pass
+            #self.document[key] = value
+        elif key == 'ID':
+            self.document[key] = value
+        elif key == 'ER':
+            self.records.append(self.document)
+        else:
+            print('Unknown field, ignore: ', key, value)
 
 
 if __name__ == '__main__':
-    doc_list = glob.glob('./data/1.txt')
-    print(doc_list)
-    for doc in doc_list:
-        document = parse_document(doc)
-        print(document)
+    file_list = glob.glob(os.path.join('.', 'data', '*.ris'))
+    print(file_list)
+    for file in file_list:
+        documents = Ris(file).records
+        for doc in documents:
+            print(doc)
