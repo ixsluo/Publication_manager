@@ -3,7 +3,7 @@ import pymongo as mg
 import argparse
 import os
 import glob
-from inout import parse_document
+from inout import Ris
 import impact
 
 def insert():
@@ -48,43 +48,31 @@ def insert():
 
 
     host = 'mongodb://' + args.user + ':' + args.passwd + '@' + args.ip
-    # * connect to database and collection
-    iccms = mg.MongoClient(host).publication[args.collection]
+    #* connect to database and collection
+    col = mg.MongoClient(host).publication[args.collection]
 
-    f_list = glob.glob(args.file)
+    file_list = glob.glob(args.file)
 
-    print('Using collecton: ', args.collection)
+    print('Using collection: ', args.collection)
 
-    for file in f_list:
+    for file in file_list:
         print('parsing ', file)
-        document, exitcode = parse_document(file)
-        if exitcode == 0:
-            pass
-        elif exitcode == 1:
-            print('Wrong periodical. Pass to the next document.')
-            continue
-        elif exitcode == 2:
-            print('Impact factor not exist, please update impact_df.xlsx. Pass to \
-    the next document.')
-            continue
-        else:
-            pass
+        documents = Ris(file).records
+        for doc in documents:
+            #? exist or not
+            query = {
+                "$or":[
+                    {"TI": doc['TI']},
+                    {"DO": doc['DO']}
+                ]
+            }
 
-
-        # ? exist or not
-        query = {
-            "$or":[
-                {"title": document['title']},
-                {"doi": document['doi']}
-            ]
-        }
-
-        if iccms.count_documents(query) != 0:
-            print('same title or doi already exist, please check again or use \
-    update instead of insert')
-        else:
-            print('New document')
-            #iccms.insert_one(document)
+            if col.count_documents(query) != 0:
+                print('same title or doi already exist, please check again or use \
+        update instead of insert')
+            else:
+                print('New document')
+                col.insert_one(doc)
 
 
 if __name__ == '__main__':
