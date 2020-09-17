@@ -1,20 +1,20 @@
 # Fields
 
-	title			''
-	all_author		[]
-	first_author	[]
-	commun_author	[]
-	periodical		''
-	publish_year	''
-	date			''
-	accept_year		''
-	volume			''
-	issue			''
-	doi				''
-	url				''
+    title         <tab>     ''
+    all_author    <tab>     []
+    first_author  <tab>     []
+    commun_author <tab>     []
+    periodical    <tab>     ''
+    publish_year  <tab>     ''
+    date          <tab>     ''
+    accept_year   <tab>     ''
+    volume        <tab>     ''
+    issue         <tab>     ''
+    doi           <tab>     ''
+    url           <tab>     ''
 
-	Start_page
-	End_page
+    Start_page
+    End_page
 
 ```
 mongodb://<user>:<passwd>@<host>:<port>
