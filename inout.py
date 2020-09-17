@@ -57,9 +57,9 @@ class Ris:
                 'T1': '',  #~ Title in html format
                 'AU': [],
                 'A1': [],  #~ Primary authors
-                'C1': [],  #~ Custom 1, corresponding author
-                'C2': '',  #~ Custom 2, impact factor. Not recommended to specify manually
+                'A0': [],  #~ Custom 1, corresponding author
                 'JF': '',  #! Journal/Periodical name: full name
+                'C2': '',  #~ Custom 2, impact factor. Not recommended to specify manually
                 'JA': '',  #~ Journal standard abbreviation
                 'PY': '',  #~ Publication year
                 'DA': '',  #~ Date
@@ -68,6 +68,7 @@ class Ris:
                 'VL': '',  #~ Volume
                 'IS': '',  #~ Issue
                 'SP': '',  #~ Start page
+                'EP': '',  #~ End page
                 'DO': '',  #~ DOI
                 'UR': '',  #~ URL
                 'SN': '',  #~ ISBN/ISSN
@@ -85,12 +86,12 @@ class Ris:
             self.document[key].append(value)
         elif key == 'A1':
             self.document[key].append(value)
-        elif key == 'C1':
+        elif key == 'A0':
             self.document[key].append(value)
-        elif key == 'C2':
-            self.document[key] = value
         elif key == 'JF':
             self.document[key] = value.lower()
+        elif key == 'C2':
+            self.document[key] = value
         elif key == 'JA':
             self.document[key] = value
         elif key == 'PY':
