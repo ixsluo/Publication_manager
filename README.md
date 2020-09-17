@@ -65,6 +65,9 @@
 
 ### 插入新数据
 
+```bash
+python insert.py -u=[publication_manager] -p=[password] -c=[iccms] -f=[ris file pattern]
+```
 
 
 ### MongoDB数据库

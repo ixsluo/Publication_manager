@@ -63,13 +63,12 @@ def insert():
             query = {
                 "$or":[
                     {"TI": doc['TI']},
-                    {"DO": doc['DO']}
+                    {"DO": doc['DO']},
                 ]
             }
 
             if col.count_documents(query) != 0:
-                print('same title or doi already exist, please check again or use \
-        update instead of insert')
+                print('same title or doi already exist, please check again or use update instead of insert, doi: ', doc['DO'])
             else:
                 print('New document')
                 col.insert_one(doc)
