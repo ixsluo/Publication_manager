@@ -2,12 +2,18 @@
 
 本程序使用本地MongoDB数据库储存网站出版物。包含插入文献记录、更改文献记录、更新影响因子、常用查询，以及导出为HTML形式。
 
+下载
+
+```bash
+git clone https://github.com/ixsluo/Publication_manager.git ~/Publication_manager
+```
+
 ## 目录
 
 - [文献格式](#文献格式)
 - [使用说明](#使用说明)
     - [插入新数据](#插入新数据)
-    - 
+    - [更新影响因子](#更新影响因子)
 ## 文献格式
 
 导入文献格式为RIS([RIS wikipedia](https://en.wikipedia.org/wiki/RIS_(file_format)))，每一行为两大写字母的关键字、两个空格、连词符’-‘、内容。一个ris文件内可以包含多条文献记录，每条记录以’TY‘关键字起，’ER‘关键字止。
@@ -61,20 +67,39 @@
 | 1 |p2        |1234|...|
 |...|...       |... |...|
 
-<sup>3</sup> 当给定正确的期刊名**JF**后，影响因子将通过文件impact/impact_df.xlsx读取覆盖写入，依次查找与PY同年的影响因子、上一年影响因子，若两年都没有，则不进行任何修改。
+<sup>3</sup> 当给定正确的期刊名**JF**后，影响因子将通过文件`impact/impact_df.xlsx`读取覆盖写入，依次查找与PY同年的影响因子、上一年影响因子，若两年都没有，则不进行任何修改。
 
 ## 使用说明
 
-### 插入新数据
+配置文件举例：
 
-```bash
-python ~/Publication_manager/insert.py -u=[publication_manager] -p=[password] -c=[iccms] -f=[ris file pattern]
+```
+> cat ~/args.conf
+-u=publication_manager
+-p=******
+-c=test
 ```
 
-或者从配置文件读取参数，如
+### 插入新数据
+
+`insert.py`查看参数说明
+
+```bash
+python ~/Publication_manager/insert.py -h
+```
+
+从配置文件读取参数并执行插入，如
 
 ```bash
 python ~/Publication_manager/insert.py @~/args.conf -f=[ris file pattern]
+```
+
+### 更新影响因子
+
+通过`impact/impact_df.xlsx`表格更新指定年份的所有文献的影响因子。当表格中无指定年份的数据时抛出异常。
+
+```bash
+python ~/Publication_manager/update_if.py @~/args.conf -y=[year]
 ```
 
 ### MongoDB数据库
