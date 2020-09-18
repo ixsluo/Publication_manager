@@ -7,42 +7,43 @@ from inout import Ris
 import impact
 
 def insert():
-    parser = argparse.ArgumentParser(description='Insert documents from file')
+    parser = argparse.ArgumentParser(
+        description='Insert documents from file',
+        fromfile_prefix_chars='@',
+    )
     parser.add_argument(
         '-u',
         '--user',
         type=str,
+        required=True,
         help='which user to login mongodb, e.g. "publication_manager"',
-        metavar='',
     )
     parser.add_argument(
         '-p',
         '--passwd',
         type=str,
+        required=True,
         help='password of the user',
-        metavar='',
     )
     parser.add_argument(
         '--ip',
         type=str,
         default="59.72.115.44:27017",
         help='host and port to connect, default "59.72.115.44:27017"',
-        metavar='',
     )
     parser.add_argument(
         '-c',
         '--collection',
         type=str,
+        required=True,
         help='which collection to use, e.g. "iccms"',
-        metavar='',
-
     )
     parser.add_argument(
         '-f',
         '--file',
         type=str,
+        required=True,
         help='file name or file name mode to insert, e.g. "data/*"',
-        metavar='',
     )
     args = parser.parse_args()
 
@@ -61,10 +62,11 @@ def insert():
         for doc in documents:
             #? exist or not
             query = {
-                "$or":[
-                    {"TI": doc['TI']},
-                    {"DO": doc['DO']},
-                ]
+                #"$or":[
+                #    {"TI": doc['TI']},
+                #    {"DO": doc['DO']},
+                #]
+                'DO': doc['DO'],
             }
 
             if col.count_documents(query) != 0:

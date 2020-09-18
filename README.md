@@ -71,6 +71,11 @@
 python insert.py -u=[publication_manager] -p=[password] -c=[iccms] -f=[ris file pattern]
 ```
 
+或者从配置文件读取参数，如
+
+```bash
+python insert.py @args.conf
+```
 
 ### MongoDB数据库
 
