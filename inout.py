@@ -61,7 +61,9 @@ class Ris:
                 'JF': '',  #! Journal/Periodical name: full name
                 'C2': '',  #~ Custom 2, impact factor. Not recommended to specify manually
                 'JA': '',  #~ Journal standard abbreviation
+                'PR': '',  #~ Pre-publish or not
                 'PY': '',  #~ Publication year
+                'MO': '',  #~ Month
                 'DA': '',  #~ Date
                 'Y1': '',  #~ Primary date
                 'Y2': '',  #~ Access date
@@ -94,7 +96,11 @@ class Ris:
             self.document[key] = value
         elif key == 'JA':
             self.document[key] = value
+        elif key == 'PR':
+            self.document[key] = value
         elif key == 'PY':
+            self.document[key] = value
+        elif key == 'MO':
             self.document[key] = value
         elif key == 'DA':
             self.document[key] = value
