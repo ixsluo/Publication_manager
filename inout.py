@@ -59,7 +59,9 @@ class Ris:
                 'A1': [],  #~ Primary authors
                 'A0': [],  #~ Custom 1, corresponding author
                 'JF': '',  #! Journal/Periodical name: full name
-                'C2': '',  #~ Custom 2, impact factor. Not recommended to specify manually
+                'C1': {},  #~ Custom 1, journal partition
+                'C2':
+                '',  #~ Custom 2, impact factor. Not recommended to specify manually
                 'JA': '',  #~ Journal standard abbreviation
                 'PR': '',  #~ Pre-publish or not
                 'PY': '',  #~ Publication year

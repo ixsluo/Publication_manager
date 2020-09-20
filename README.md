@@ -32,6 +32,7 @@ git clone https://github.com/ixsluo/Publication_manager.git ~/Publication_manage
 |**A1**             |第一作者，每个作者单独一行|
 |**A0**<sup>1</sup> |非标准标签，通讯作者，每个作者单独一行|
 |**JF**             |期刊名全称，必须包含在impact/impact_df.xlms<sup>2</sup>的所有期刊名中|
+|C1                 |自定义标签1，分区，包括中科院分区(CAS)、中信所分区(ISTIC)、校分区等，通过相应表格自动读取|
 |C2                 |自定义标签2，影响因子。不推荐手动设定<sup>3</sup>|
 |JA                 |期刊名标准缩写|
 |PR                 |非标准标签，是否为预发表，是：1，否：0或不填该字段|
