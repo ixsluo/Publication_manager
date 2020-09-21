@@ -2,9 +2,12 @@
 import glob
 import os
 import re
-import impact
+import read_tables
 
-df = impact.df
+impact = read_tables.impact
+istic = read_tables.istic
+
+#cas = read_tables.cas
 
 
 #& parse ris file
@@ -15,25 +18,32 @@ class Ris:
         self.parse(file)
         #& Check periodical full name
         for doc in self.records[:]:
-            if doc['JF'] not in df['periodical'].values:
+            if doc['JF'] not in impact['periodical'].values:
                 print('Wrong periodical full name!!!    ', doc['JF'])
                 print('Pass to next document.')
                 self.records.remove(doc)
-        #& Add impact factor
         for doc in self.records:
-            if doc['PY'] in df.columns:
+            #! Add impact factor
+            if doc['PY'] in impact.columns:
                 #~ IF of the current year exist.
                 if_year = doc['PY']
-            elif str(int(doc['PY']) - 1) in df.columns:
+            elif str(int(doc['PY']) - 1) in impact.columns:
                 #~ IF of the current year not exist, use IF of the last year.
                 if_year = str(int(doc['PY']) - 1)
             else:
                 #~ IF of the last year not exist, do not do anything.
                 continue
-            doc['C2'] = df[if_year].loc[
-                df[df['periodical'] == doc['JF']].index.values[0]
-            ]
-
+            doc['C2'] = impact[if_year].loc[impact[impact['periodical'] ==
+                                                   doc['JF']].index.values[0]]
+            #! Add journal partition
+            #~ istic partition
+            doc['C1']['istic'] = istic['partition'].loc[istic[
+                istic['periodical'] == doc['JF']].index.values[0]]
+            #~ cas partition
+            '''
+            doc['C1']['cas'] = cas['partition'].loc[cas[
+                cas['periodical'] == doc['JF']].index.values[0]]
+            '''
 
     def parse(self, file):
         with open(file, 'r', encoding='utf-8') as f:

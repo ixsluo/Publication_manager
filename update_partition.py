@@ -34,48 +34,42 @@ parser.add_argument(
     help='which collection to use, e.g. "iccms"',
 )
 parser.add_argument(
-    '-y',
-    '--year',
+    '--partition',
     type=str,
-    help='update impact factor of which year',
+    help='which journal partition to update, istic or cas',
+    choices=['istic', 'cas'],
 )
 args = parser.parse_args()
 
-impact = read_tables.impact
+istic = read_tables.istic
 
 
-def update_if():
+def update_partition():
     host = 'mongodb://' + args.user + ':' + args.passwd + '@' + args.ip
     #* connect to database and collection
     col = mg.MongoClient(host).publication[args.collection]
     print('Using collection: ', args.collection)
 
-    if args.year not in impact.columns:
-        raise ValueError(
-            'No impact factor for given year, please check impact_df.xlsx for useable year.'
-        )
-    else:
-        print('Updating all documents of year: ', args.year)
-        query = {
-            'PY': args.year,
-        }
-        projection = {
-            '_id': 1,
-            'JF': 1,
-        }
-        for doc in col.find(query, projection):
-            col.update_one(
-                {'_id': doc['_id']},
-                {
-                    '$set': {
-                        'C2':
-                        impact[args.year].loc[impact[
-                            impact['periodical'] == doc['JF']].index.values[0]]
-                    },
+    print('Updating all documents in collection: ', args.collection)
+    query = {}
+    projection = {
+        '_id': 1,
+        'JF': 1,
+    }
+    for doc in col.find(query, projection):
+        key = 'C1.' + args.partition
+        col.update_one(
+            {'_id': doc['_id']},
+            {
+                '$set': {
+                    key:
+                    istic['partition'].loc[istic[istic['periodical'] ==
+                                                 doc['JF']].index.values[0]]
                 },
-            )
-        print('Updated.')
+            },
+        )
+    print('Updated.')
 
 
 if __name__ == '__main__':
-    update_if()
+    update_partition()
