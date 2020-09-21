@@ -45,7 +45,7 @@ git clone https://github.com/ixsluo/Publication_manager.git ~/Publication_manage
 |IS                 |期刊|
 |SP                 |起始页码|
 |EP                 |终止页码
-|**DO**             |DOI，数字对象唯一标识符|
+|**DO**             |DOI，数字对象唯一标识符，**重要！！！**，请确保正确|
 |*UR*               |URL，链接|
 |SN                 |ISBN/ISSN|
 |AB                 |摘要|
