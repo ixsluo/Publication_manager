@@ -48,8 +48,8 @@ class Ris:
             else:
                 #~ IF of the last year not exist, do not do anything.
                 continue
-            doc['C2'] = impact[if_year].loc[impact[impact['periodical'] ==
-                                                   doc['JF']].index.values[0]]
+            doc['C2'] = float(impact[if_year].loc[impact[
+                impact['periodical'] == doc['JF']].index.values[0]])
 
     def parse(self, file):
         with open(file, 'r', encoding='utf-8') as f:
