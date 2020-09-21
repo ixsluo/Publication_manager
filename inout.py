@@ -16,13 +16,28 @@ class Ris:
     def __init__(self, file=None):
         self.records = []
         self.parse(file)
-        #& Check periodical full name
+        #& Check doi and periodical full name
         for doc in self.records[:]:
-            if doc['JF'] not in impact['periodical'].values:
+            if len(doc['DO']) == 0:
+                print('DOI must be given, please check ', doc)
+                print('Pass to next document.')
+                self.records.remove(doc)
+            elif doc['JF'] not in impact['periodical'].values:
                 print('Wrong periodical full name!!!    ', doc['JF'])
                 print('Pass to next document.')
                 self.records.remove(doc)
+        #& Update impact factor and journal partition
         for doc in self.records:
+            #! Add journal partition
+            #~ istic partition
+            doc['C1']['istic'] = istic['partition'].loc[istic[
+                istic['periodical'] == doc['JF']].index.values[0]]
+            #~ cas partition
+            '''
+            doc['C1']['cas'] = cas['partition'].loc[cas[
+                cas['periodical'] == doc['JF']].index.values[0]]
+            '''
+
             #! Add impact factor
             if doc['PY'] in impact.columns:
                 #~ IF of the current year exist.
@@ -35,15 +50,6 @@ class Ris:
                 continue
             doc['C2'] = impact[if_year].loc[impact[impact['periodical'] ==
                                                    doc['JF']].index.values[0]]
-            #! Add journal partition
-            #~ istic partition
-            doc['C1']['istic'] = istic['partition'].loc[istic[
-                istic['periodical'] == doc['JF']].index.values[0]]
-            #~ cas partition
-            '''
-            doc['C1']['cas'] = cas['partition'].loc[cas[
-                cas['periodical'] == doc['JF']].index.values[0]]
-            '''
 
     def parse(self, file):
         with open(file, 'r', encoding='utf-8') as f:
