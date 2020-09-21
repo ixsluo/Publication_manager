@@ -99,15 +99,17 @@ python ~/Publication_manager/insert.py -h
 从配置文件读取参数并执行插入，如
 
 ```bash
-python ~/Publication_manager/insert.py @~/args.conf -f=[ris file pattern]
+python ~/Publication_manager/insert.py @args.conf -f=[ris file pattern]
 ```
+
+配置文件无法通过‘~’指定路径，可以使用‘.’、‘..’等。
 
 ### 更新影响因子
 
 通过`tables/impact_df.xlsx`表格更新指定年份的所有文献的影响因子。当表格中无指定年份的数据时抛出异常。
 
 ```bash
-python ~/Publication_manager/update_if.py @~/args.conf -y=[year]
+python ~/Publication_manager/update_if.py @args.conf -y=[year]
 ```
 
 ### 更新期刊分区
@@ -115,7 +117,7 @@ python ~/Publication_manager/update_if.py @~/args.conf -y=[year]
 通过`tables/cas.xlsx`或`tables/istic.xlsx`表格更新所有文献的分区，`--partition`参数指定更新哪个机构的分区。
 
 ```bash
-python ~/Publication_manager/update_partition.py @~/args.conf  --partition=[istic/cas]
+python ~/Publication_manager/update_partition.py @args.conf  --partition=[istic/cas]
 ```
 
 ### 更新数据
@@ -123,7 +125,7 @@ python ~/Publication_manager/update_partition.py @~/args.conf  --partition=[isti
 `update_by_doi.py`，读取RIS文件，更新具有相同doi数据的某些字段。必须提供`JF`与`DO`字段。
 
 ```bash
-python ~/Publication_manager/update_by_doi.py @~/args.conf -f=[ris file pattern] 
+python ~/Publication_manager/update_by_doi.py @args.conf -f=[ris file pattern] 
 ```
 
 ### 替换数据
@@ -133,7 +135,7 @@ python ~/Publication_manager/update_by_doi.py @~/args.conf -f=[ris file pattern]
 重要！！！`替换`会更改整条数据，应提供完整ris！！！
 
 ```bash
-python ~/Publication_manager/replace_by_doi.py @~/args.conf -f=[ris file pattern] 
+python ~/Publication_manager/replace_by_doi.py @args.conf -f=[ris file pattern] 
 ```
 
 ### 数据库连接
