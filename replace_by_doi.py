@@ -4,9 +4,10 @@ import argparse
 import os
 import glob
 from inout import Ris
+import read_tables
 
 
-def insert():
+def replace():
     parser = argparse.ArgumentParser(
         description='Insert documents from file',
         fromfile_prefix_chars='@',
@@ -47,7 +48,6 @@ def insert():
     )
     args = parser.parse_args()
 
-
     host = 'mongodb://' + args.user + ':' + args.passwd + '@' + args.ip
     #* connect to database and collection
     col = mg.MongoClient(host).publication[args.collection]
@@ -69,15 +69,15 @@ def insert():
                 'DO': doc['DO'],
             }
 
-            if col.count_documents(query) != 0:
+            if col.count_documents(query) == 0:
                 print(
-                    'There already exist a record of the same doi, please check again.'
+                    'There is no record of the same doi, cannot replace, please check again.'
                 )
                 print('DOI: ', doc['DO'])
             else:
-                print('New document')
-                col.insert_one(doc)
+                print('Replace one')
+                col.replace_one(query, doc, upsert=False)
 
 
 if __name__ == '__main__':
-    insert()
+    replace()

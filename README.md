@@ -14,6 +14,11 @@ git clone https://github.com/ixsluo/Publication_manager.git ~/Publication_manage
 - [使用说明](#使用说明)
     - [插入新数据](#插入新数据)
     - [更新影响因子](#更新影响因子)
+    - [更新期刊分区](#更新期刊分区)
+    - [更新数据](#更新数据)
+    - [替换数据](#替换数据)
+    - [数据库连接](#数据库连接)
+
 ## 文献格式
 
 导入文献格式为RIS([RIS wikipedia](https://en.wikipedia.org/wiki/RIS_(file_format)))，每一行为两大写字母的关键字、两个空格、连词符’-‘、内容。一个ris文件内可以包含多条文献记录，每条记录以’TY‘关键字起，’ER‘关键字止。
@@ -113,7 +118,25 @@ python ~/Publication_manager/update_if.py @~/args.conf -y=[year]
 python ~/Publication_manager/update_partition.py @~/args.conf  --partition=[istic/cas]
 ```
 
-### MongoDB数据库
+### 更新数据
+
+`update_by_doi.py`，读取RIS文件，更新具有相同doi数据的某些字段。必须提供`JF`与`DO`字段。
+
+```bash
+python ~/Publication_manager/update_by_doi.py @~/args.conf -f=[ris file pattern] 
+```
+
+### 替换数据
+
+`replace_by_doi.py`，读取RIS文件，替换具有相同doi的整条数据。必须提供`JF`与`DO`字段。
+
+重要！！！`替换`会更改整条数据，应提供完整ris！！！
+
+```bash
+python ~/Publication_manager/replace_by_doi.py @~/args.conf -f=[ris file pattern] 
+```
+
+### 数据库连接
 
 ```
 mongodb://<user>:<passwd>@<host>:<port>
